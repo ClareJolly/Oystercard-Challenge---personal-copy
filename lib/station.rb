@@ -1,15 +1,23 @@
 class Station
 
+#attr_reader :name
+#attr_reader :zone
+
   def initialize(name)
     @name = name
-    @zonetable = ZoneTable.new
+    @zone = ZoneTable.new.return_zone(name)
   end
 
   def get_zone
-    @zonetable.return_zone(@name)
+    @zone
+  end
+
+  def get_name
+    @name
   end
 
 end
+
 
 class ZoneTable
   def initialize
@@ -17,7 +25,6 @@ class ZoneTable
   end
 
   def return_zone(name)
-    p @zone_table
     @zone_table.each{|zone,stations|
       return zone if stations.include?(name)
     }
