@@ -1,20 +1,20 @@
 class Station
 
-#attr_reader :name
-#attr_reader :zone
+attr_reader :name
+attr_reader :zone
 
   def initialize(name)
     @name = name
     @zone = ZoneTable.new.return_zone(name)
   end
 
-  def get_zone
-    @zone
-  end
-
-  def get_name
-    @name
-  end
+  # def get_zone
+  #   @zone
+  # end
+  #
+  # def get_name
+  #   @name
+  # end
 
 end
 

@@ -1,25 +1,28 @@
 class Journey
 
+attr_reader :endstation
+attr_reader :startstation
+
   def initialize(start_station)
-    @startstation = start_station.get_name
+    @startstation = start_station.name
     @endstation = nil
-    @startstationzone = start_station.get_zone
+    @startstationzone = start_station.zone
     @endstationzone = nil
     @fare = 0
   end
 
-  def show_start
-    @startstation
-  end
+  # def show_start
+  #   @startstation
+  # end
 
   def end_journey(endstation)
-    @endstation = endstation.get_name
-    @endstationzone = endstation.get_zone
+    @endstation = endstation.name
+    @endstationzone = endstation.zone
   end
 
-  def show_end
-    @endstation
-  end
+  # def show_end
+  #   @endstation
+  # end
 
   def complete?
     (@startstation.nil? || @endstation.nil? )? false : true
