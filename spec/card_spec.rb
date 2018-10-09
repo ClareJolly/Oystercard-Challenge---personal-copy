@@ -70,7 +70,7 @@ describe Card do
   # end
 
   it 'returns an empty list for a new card' do
-    expect(subject.journey_list.length).to eq 0
+    expect(subject.journeys.length).to eq 0
   end
 
   it 'returns a list of journeys saved on the card' do

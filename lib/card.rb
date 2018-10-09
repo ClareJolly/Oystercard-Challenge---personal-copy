@@ -7,12 +7,10 @@ class Card
   attr_reader :journeys
 
   LIMIT = 90
-  # MINIMUM_FARE = 1
 
   def initialize(balance = 0)
     @balance = balance
     @journeys = []
-    # p Journey::MIN_FARE
   end
 
   def top_up(money)
@@ -21,29 +19,21 @@ class Card
   end
 
   def touch_in(station)
-    # p station
     journey = Journey.new(station)
     raise "You need a minimum balance of £#{Journey::MIN_FARE} to enter barrier." if balance_low
     @journeys << journey
   end
 
   def touch_out(station)
-    # deduct(MINIMUM_FARE)
-    # raise "No record" if @journeys.last.nil?
-    # @journeys.last.end_station=(station)
     @journeys.last.end_journey(station)
     deduct(@journeys.last.fare)
   end
 
-  # def ongoing_journey?
-  #   (@journeys.last[:start] != nil) && (@journeys.last[:destination] == nil)
-  # end
-
-  def journey_list
-    @journeys
-  end
-
   private
+
+  # def journey_list
+  #   @journeys
+  # end
 
   def exceeds_limit?(money)
     (@balance + money) > LIMIT

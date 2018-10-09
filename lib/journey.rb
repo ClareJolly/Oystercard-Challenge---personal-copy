@@ -11,38 +11,21 @@ class Journey
 
   def initialize(station)
     @start_station = station
-    # @startstation = @start_station.name
     @end_station = nil
-    # @startstationzone = @start_station.zone
-    # @endstationzone = nil
     @fare = 0
   end
-
-  # def show_start
-  #   @startstation
-  # end
 
   def end_journey(endstation)
     @end_station = endstation
     calculate_fare
-    # @endstationzone = endstation.zone
   end
-
-  # def show_end
-  #   @endstation
-  # end
 
   def complete?
     (@start_station.nil? || @end_station.nil?) ? false : true
   end
 
   def calculate_fare
-    # raise "not completed" unless complete?
-    # MIN_FARE
     !complete? ? @fare = PENALTY_FARE : @fare = MIN_FARE
-    # p @fare
-    # raise "Not complete" unless complete?
-    # @fare = FareCalculator.new.return_fare(@startstationzone,@endstationzone)
   end
 end
 
