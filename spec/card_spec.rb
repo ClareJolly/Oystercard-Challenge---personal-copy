@@ -2,7 +2,8 @@ require 'card'
 
 describe Card do
 
-  let(:station){ double :station }
+  let(:entry_station) { double :station }
+  let(:exit_station) { double :station }
 
   before(:each) do
     @card = Card.new(10)
@@ -21,38 +22,49 @@ describe Card do
     expect(subject.balance).to eq 10
   end
 
-  it "raises error if top up will go over card limit" do
+  it 'raises error if top up will go over card limit' do
     expect { subject.top_up(91) }.to raise_error "Top up would take balance over card limit - £#{Card::LIMIT}"
   end
 
   it 'starts a journey' do
-    @card.touch_in(station)
+    @card.touch_in(entry_station)
     expect(@card.in_journey?).to eq true
   end
 
   it 'ends a journey' do
-    @card.touch_in(station)
-    @card.touch_out
+    @card.touch_in(entry_station)
+    @card.touch_out(exit_station)
     expect(@card.in_journey?).to eq false
   end
 
-  it "Doesn't allow you through the barrier if balance less than £1" do
+  it 'Doesnt allow you through the barrier if balance less than £1' do
     card = Card.new(0.99)
-    expect { card.touch_in(station) }.to raise_error "You need a minimum balance of £#{Card::MINIMUM_FARE} to enter barrier."
+    expect { card.touch_in(entry_station) }.to raise_error "You need a minimum balance of £#{Card::MINIMUM_FARE} to enter barrier."
   end
 
-  it "deducts the journey cost from balance" do
-    expect {@card.touch_out}.to change{@card.balance}.by(-(Card::MINIMUM_FARE))
+  it 'deducts the journey cost from balance' do
+    @card.touch_in(entry_station)
+    expect {@card.touch_out(exit_station)}.to change{@card.balance}.by(-(Card::MINIMUM_FARE))
   end
 
-  it "Remembers the entry station" do
-    @card.touch_in(station)
-    expect(@card.entry_station).to eq station
+  it 'Remembers the entry station' do
+    @card.touch_in(entry_station)
+    expect(@card.entry_station).to eq entry_station
   end
 
-  it "clears the entry station" do
-    @card.touch_in(station)
-    @card.touch_out
+  it 'clears the entry station' do
+    @card.touch_in(entry_station)
+    @card.touch_out(exit_station)
     expect(@card.entry_station).to eq nil
+  end
+
+  it 'returns an empty list for a new card' do
+    expect(subject.journey_list.length).to eq 0
+  end
+
+  it 'returns a list of journeys saved on the card' do
+    @card.touch_in(entry_station)
+    @card.touch_out(exit_station)
+    expect(@card.journey_list.length).to eq 1
   end
 end
