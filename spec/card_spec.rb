@@ -2,12 +2,26 @@ require 'card'
 
 describe Card do
 
-  let(:entry_station) { double :station }
-  let(:exit_station) { double :station }
+  # let(:entry_station) { double :station }
+  # let(:exit_station) { double :station }
+  let(:starting) { double :starting, :name => "Camden", :zone => 1 }
+  # let(:start_station2) {double :start_station2, :name => "Barbican", :zone => 2 }
+  let(:ending) { double :ending, :name => "Clapham", :zone => 1 }
+  # let(:journey_test) {double :journey_test, :startstation => "Camden", :endstation => "Clapham" }
 
   before(:each) do
     @card = Card.new(10)
   end
+
+  # context "born 19 years ago" do
+  #   subject { Journey.new(:startstation => "Camden" ,:endstation => "Clapham" )}
+  #   # it { should be_eligible_to_vote }
+  #   # its(:age) { should == 19 }
+  #   # it "should be younger than a 20 year old" do
+  #   #   twenty_year_old = Person.new(:birthday => 20.years.ago)
+  #   #   subject.should be_younger_than(twenty_year_old)
+  #   # end
+  # end
 
   it 'Card has intialised amount' do
     expect(@card.balance).to eq 10
@@ -27,42 +41,51 @@ describe Card do
   end
 
   it 'starts a journey' do
-    @card.touch_in("camden")
-    expect(@card.ongoing_journey?).to eq true
+    @card.touch_in(starting)
+    expect(@card.journeys.last.start_station).to eq starting
   end
 
   it 'ends a journey' do
-    @card.touch_in(entry_station)
-    @card.touch_out(exit_station)
-    expect(@card.ongoing_journey?).to eq false
+    @card.touch_in(starting)
+    @card.touch_out(ending)
+  # p @card.journeys.last.end_station
+    expect(@card.journeys.last.end_station).to eq ending
   end
 
   it 'Doesnt allow you through the barrier if balance less than £1' do
     card = Card.new(0.99)
-    expect { card.touch_in(entry_station) }.to raise_error "You need a minimum balance of £#{Card::MINIMUM_FARE} to enter barrier."
+    expect { card.touch_in(starting) }.to raise_error "You need a minimum balance of £#{Journey::MIN_FARE} to enter barrier."
   end
 
   it 'deducts the journey cost from balance' do
-    @card.touch_in(entry_station)
-    expect {@card.touch_out(exit_station)}.to change{@card.balance}.by(-(Card::MINIMUM_FARE))
+    @card.touch_in(starting)
+    @card.touch_out(ending)
+    expect { @card.touch_out(ending) }.to change { @card.balance }.by(-Journey::MIN_FARE)
   end
+
+  # it 'deducts the penalty from balance' do
+  #   @card.touch_in(starting)
+  #   # @card.touch_out(ending)
+  #   expect {@card.touch_out(ending)}.to change{@card.balance}.by(-(Card::MINIMUM_FARE))
+  # end
 
   it 'returns an empty list for a new card' do
     expect(subject.journey_list.length).to eq 0
   end
 
   it 'returns a list of journeys saved on the card' do
-    @card.touch_in(entry_station)
-    @card.touch_out(exit_station)
-    expect(@card.journey_list.length).to eq 1
+    @card.touch_in(starting)
+    @card.touch_out(ending)
+    # p @card.journeys
+    expect(@card.journeys.length).to eq 1
   end
 
-
   it 'returns a list of journeys (along with the zones) saved on the card' do
-    @card.touch_in("Camden")
-    @card.touch_out("Clapham")
-    expect(@card.journey_list.last[:startzone]).to eq 1
-    expect(@card.journey_list.last[:destinationzone]).to eq 1
+    @card.touch_in(starting)
+    @card.touch_out(ending)
+    # p @card.journeys.last
+    expect(@card.journeys.last.start_station).to eq starting
+    expect(@card.journeys.last.end_station).to eq ending
   end
 
 end

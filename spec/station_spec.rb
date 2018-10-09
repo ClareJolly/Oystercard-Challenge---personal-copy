@@ -10,4 +10,8 @@ describe Station do
     expect(Station.new("Camden").name).to eq "Camden"
   end
 
+  it "if no match zone is 0" do
+    expect(Station.new("TEST").zone).to eq 0
+  end
+
 end
