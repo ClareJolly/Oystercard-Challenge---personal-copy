@@ -27,14 +27,14 @@ describe Card do
   end
 
   it 'starts a journey' do
-    @card.touch_in(entry_station)
-    expect(@card.in_journey?).to eq true
+    @card.touch_in("camden")
+    expect(@card.ongoing_journey?).to eq true
   end
 
   it 'ends a journey' do
     @card.touch_in(entry_station)
     @card.touch_out(exit_station)
-    expect(@card.in_journey?).to eq false
+    expect(@card.ongoing_journey?).to eq false
   end
 
   it 'Doesnt allow you through the barrier if balance less than £1' do
@@ -47,17 +47,6 @@ describe Card do
     expect {@card.touch_out(exit_station)}.to change{@card.balance}.by(-(Card::MINIMUM_FARE))
   end
 
-  it 'Remembers the entry station' do
-    @card.touch_in(entry_station)
-    expect(@card.entry_station).to eq entry_station
-  end
-
-  it 'clears the entry station' do
-    @card.touch_in(entry_station)
-    @card.touch_out(exit_station)
-    expect(@card.entry_station).to eq nil
-  end
-
   it 'returns an empty list for a new card' do
     expect(subject.journey_list.length).to eq 0
   end
@@ -67,4 +56,13 @@ describe Card do
     @card.touch_out(exit_station)
     expect(@card.journey_list.length).to eq 1
   end
+
+
+  it 'returns a list of journeys (along with the zones) saved on the card' do
+    @card.touch_in("Camden")
+    @card.touch_out("Clapham")
+    expect(@card.journey_list.last[:startzone]).to eq 1
+    expect(@card.journey_list.last[:destinationzone]).to eq 1
+  end
+
 end

@@ -1,3 +1,5 @@
+require "station"
+
 class Card
   attr_reader :balance
   attr_reader :entry_station
@@ -8,7 +10,6 @@ class Card
 
   def initialize(balance = 0)
     @balance = balance
-    @entry_station = nil
     @journeys = []
   end
 
@@ -19,19 +20,18 @@ class Card
 
   def touch_in(station)
     raise "You need a minimum balance of £#{MINIMUM_FARE} to enter barrier." if balance_low
-    @entry_station = station
-    @journeys << Hash.new(:start => station, :destination => nil)
+    @journeys << {start: station, destination: nil, startzone: ZoneTable.new.return_zone(station), destinationzone: nil}
   end
 
   def touch_out(station)
     deduct(MINIMUM_FARE)
-    @entry_station = nil
     raise "No record" if @journeys.last.nil?
     @journeys.last[:destination] = station
+    @journeys.last[:destinationzone] = ZoneTable.new.return_zone(station)
   end
 
-  def in_journey?
-    !!entry_station
+  def ongoing_journey?
+    (@journeys.last[:start] != nil) && (@journeys.last[:destination] == nil)
   end
 
   def journey_list
